@@ -26,7 +26,6 @@
         .section-title { font-weight: bold; margin: 15px 0 8px 5px; color: var(--primary-dark); }
         .name-input { width: 100%; padding: 12px; border: 2px solid var(--accent-blue); border-radius: 8px; font-size: 16px; margin-bottom: 8px; outline: none; }
         
-        /* 人數區塊樣式 */
         .count-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .count-item { background: white; padding: 8px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; }
         .count-item label { font-size: 11px; color: #666; margin-bottom: 4px; }
@@ -52,10 +51,10 @@
 </head>
 <body>
 
-<div class="mobile-header">澎湖報價助手 (全功能人數版)</div>
+<div class="mobile-header">澎湖報價助手 (行動優化版)</div>
 
 <details>
-    <summary>✈️ 華信航空 (總價/單價明細)</summary>
+    <summary>✈️ 華信航空 (總價明細)</summary>
     <div class="card-body">
         <table>
             <tr><th>航線</th><th>成人</th><th>兒童</th><th>敬老</th></tr>
@@ -82,7 +81,7 @@
 </details>
 
 <details open>
-    <summary>✈️ 立榮航空 (總價/單價明細)</summary>
+    <summary>✈️ 立榮航空 (總價明細)</summary>
     <div class="card-body">
         <table>
             <tr><th>航線</th><th>成人</th><th>兒童</th><th>敬老</th></tr>
@@ -121,16 +120,16 @@
 </details>
 
 <details>
-    <summary>🚢 船票費用 & 2026 連假參考</summary>
+    <summary>🚢 船票 & 2026 連假參考</summary>
     <div class="card-body">
         <div style="padding:10px; line-height:1.8; background:#fff;">
-            <span style="font-weight:bold; color:var(--primary-dark); font-size:14px;">🚢 嘉義布袋來回船票：</span><br>
-            <span class="ship-badge">☕ 平日</span> <b class="p-total" style="display:inline;">1300</b><br>
+            🚢 嘉義布袋來回船票：<br>
+            <span class="ship-badge">☕ 平日</span> <b class="p-total" style="display:inline;">1300</b>
             <span class="ship-badge">☀️ 假日</span> <b class="p-total" style="display:inline;">1500</b><br>
-            <span class="ship-badge">🚩 連假</span> <b class="p-total" style="display:inline;">1700</b><br>
-            <span class="ship-badge">🎫 半票</span> <b class="p-total" style="display:inline;">975</b> (敬/兒/愛)<br>
+            <span class="ship-badge">🚩 連假</span> <b class="p-total" style="display:inline;">1700</b>
+            <span class="ship-badge">🎫 半票</span> <b class="p-total" style="display:inline;">975</b><br>
             <hr style="border:0; border-top:1px solid #eee; margin:10px 0;">
-            <span style="font-weight:bold; color:var(--primary-dark); font-size:14px;">📅 2026 連假重點：</span><br>
+            📅 2026 連假：<br>
             🚩 清明: 4/2-4/6 | 端午: 6/19-21<br>
             🚩 中秋: 9/25-28 | 國慶: 10/9-11
         </div>
@@ -141,26 +140,14 @@
 <input type="text" id="custName" class="name-input" oninput="doSync()" placeholder="請輸入姓名">
 
 <div class="count-grid">
-    <div class="count-item">
-        <label>成人 (12歲↑)</label>
-        <input type="number" id="numA" value="0" min="0" oninput="doSync()">
-    </div>
-    <div class="count-item">
-        <label>兒童 (3-12歲)</label>
-        <input type="number" id="numC312" value="0" min="0" oninput="doSync()">
-    </div>
-    <div class="count-item">
-        <label>兒童 (2-12歲)</label>
-        <input type="number" id="numC212" value="0" min="0" oninput="doSync()">
-    </div>
-    <div class="count-item">
-        <label>65歲↑ / 愛陪</label>
-        <input type="number" id="numElder" value="0" min="0" oninput="doSync()">
-    </div>
+    <div class="count-item"><label>成人</label><input type="number" id="numA" value="0" min="0" oninput="doSync()"></div>
+    <div class="count-item"><label>兒童(3-12)</label><input type="number" id="numC312" value="0" min="0" oninput="doSync()"></div>
+    <div class="count-item"><label>兒童(2-12)</label><input type="number" id="numC212" value="0" min="0" oninput="doSync()"></div>
+    <div class="count-item"><label>敬老/愛陪</label><input type="number" id="numElder" value="0" min="0" oninput="doSync()"></div>
 </div>
 
-<div class="section-title">✍️ 輸入細目</div>
-<textarea id="input" oninput="doSync()" placeholder="輸入範例：&#10;4/25-4/27&#10;台北立榮成人 4289*2&#10;布袋船票(假) 1500*2&#10;小計&#10;總計"></textarea>
+<div class="section-title">✍️ 輸入細目 (輸入「小計」帶出條款)</div>
+<textarea id="input" oninput="doSync()" placeholder="輸入範例：&#10;4/25-4/27&#10;台北立榮成人 4289*2&#10;折扣 -500&#10;小計"></textarea>
 
 <div class="section-title">📋 報價單預覽</div>
 <div id="result" class="result-box"></div>
@@ -203,7 +190,6 @@ function doSync() {
     const name = document.getElementById("custName").value;
     const resDiv = document.getElementById("result");
     
-    // 人數抓取
     const nA = parseInt(document.getElementById("numA").value) || 0;
     const nC3 = parseInt(document.getElementById("numC312").value) || 0;
     const nC2 = parseInt(document.getElementById("numC212").value) || 0;
@@ -214,7 +200,6 @@ function doSync() {
     const lines = input.split("\n");
     let out = name ? `👤 致：${name} 貴賓\n` : "";
     
-    // 生成人數彙整
     let pList = [];
     if(nA > 0) pList.push(`成人×${nA}`);
     if(nC3 > 0) pList.push(`兒童(3-12)×${nC3}`);
@@ -223,7 +208,7 @@ function doSync() {
     if(pList.length > 0) out += `👥 人數：${pList.join('、')}\n`;
 
     out += "📋 澎湖旅遊行程報價明細\n──────────────\n\n";
-    let totalSum = 0, groupSum = 0, showFooter = false;
+    let totalSum = 0, groupSum = 0;
 
     lines.forEach(line => {
         let text = line.trim(); if(!text) return;
@@ -240,6 +225,7 @@ function doSync() {
             return;
         }
 
+        // 乘法運算邏輯
         if(text.includes("*")) {
             let parts = text.split("*"), labelWithMath = parts[0].trim(), qty = parseFloat(parts[1]) || 1;
             let mathMatch = labelWithMath.match(/([\d\+\-\(\)\. ]+)$/);
@@ -255,36 +241,41 @@ function doSync() {
             }
         }
 
+        // 修正後的折扣/優惠邏輯 (處理負號)
+        if (text.includes("折扣") || text.includes("優惠") || text.includes("減") || (text.includes("-") && /\d/.test(text))) {
+            let valMatch = text.match(/-?\d+/);
+            if (valMatch) {
+                let val = parseInt(valMatch[0]);
+                out += `✨ ${text.replace(valMatch[0], "").trim()}：$${val.toLocaleString()}\n`;
+                groupSum += val; totalSum += val; return;
+            }
+        }
+
         if(text === "小計") {
-            out += `\n💰 【小計】：NT$ ${groupSum.toLocaleString()}\n──────────────\n\n`;
+            out += `💰 【本單小計】：NT$ ${groupSum.toLocaleString()}\n`;
+            out += `🛡️ 費用包含 旅責險 意外250萬 醫療20萬\n`;
+            out += `📜 規範：訂單成立比照國內定型化契約進行。\n──────────────\n\n`;
             groupSum = 0; return;
         }
-        if(text === "總計" || text === "大計") {
-            out += `\n💰 【總計】：NT$ ${totalSum.toLocaleString()}\n──────────────\n`;
-            showFooter = true; return;
-        }
+        
         out += text + "\n";
     });
-    if(showFooter) out += "\n🎁 包含：機場碼頭接送、250萬責任險、免稅店卡。\n📜 規範：悉依「國內旅遊定型化契約書」辦理。";
+    
     lastSum = totalSum; resDiv.innerText = out;
 }
 
-// 存檔與讀取邏輯保留 (Key更新為 v6 以區隔版本)
 const STORAGE_KEY = "p_quotes_mobile_v6";
 
 function saveArchive() {
     const name = document.getElementById("custName").value || "未命名";
     const rawInput = document.getElementById("input").value;
     if(!rawInput.trim()) return;
-    
-    // 儲存人數狀態
     const counts = {
         nA: document.getElementById("numA").value,
         nC3: document.getElementById("numC312").value,
         nC2: document.getElementById("numC212").value,
         nE: document.getElementById("numElder").value
     };
-
     const archive = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     archive.unshift({ id: Date.now(), name, date: lastDate, sum: lastSum, rawInput, counts });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(archive.slice(0, 50)));
