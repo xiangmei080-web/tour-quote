@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>澎湖旅遊報價系統 - 視覺優化版</title>
+    <style>
+        :root { --primary-dark: #2c3e50; --accent-blue: #2980b9; --danger-red: #d32f2f; --bg-gray: #f0f2f5; --success-green: #27ae60; --export-orange: #e67e22; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg-gray); margin: 0; padding: 5px; color: #333; font-size: 11px; }
+        .dashboard { display: grid; grid-template-columns: 1.1fr 1.2fr 0.7fr; gap: 5px; margin-bottom: 5px; }
+        .airline-card { background: white; border-radius: 4px; border: 1px solid #ccc; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .card-header { background: var(--primary-dark); color: white; padding: 3px 6px; font-weight: bold; font-size: 12px; }
+        .card-body { padding: 4px; overflow-y: auto; max-height: 200px; }
+        table { width: 100%; border-collapse: collapse; line-height: 1.1; }
+        th { text-align: left; color: var(--accent-blue); border-bottom: 1px solid #eee; padding: 2px 0; font-size: 11px; }
+        td { padding: 1px 0; border-bottom: 1px dashed #f5f5f5; vertical-align: top; }
+        .p-type { font-weight: bold; color: #555; width: 30px; }
+        .p-val { color: #666; }
+        .p-total { color: var(--danger-red); font-weight: bold; }
+        .main-container { display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 8px; height: calc(100vh - 240px); min-height: 380px; }
+        .col { display: flex; flex-direction: column; }
+        .col-title { font-weight: bold; padding: 2px 0; color: var(--primary-dark); display: flex; justify-content: space-between; }
+        .name-input { padding: 6px; border: 1px solid var(--accent-blue); border-radius: 4px; margin-bottom: 4px; font-size: 14px; font-weight: bold; outline: none; }
+        textarea { flex: 1; font-size: 15px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #fffdf2; resize: none; line-height: 1.4; }
+        .result-box { flex: 1; padding: 10px; background: white; border: 1px solid #ccc; border-radius: 4px; white-space: pre-wrap; font-size: 15px; overflow-y: auto; line-height: 1.6; }
+        .archive-list { flex: 1; background: #dfe4ea; border: 1px solid #ccc; border-radius: 4px; overflow-y: auto; padding: 4px; }
+        .archive-item { background: white; border: 1px solid #ddd; padding: 5px; margin-bottom: 4px; border-radius: 3px; cursor: pointer; border-left: 4px solid var(--accent-blue); position: relative; }
+        .del-btn { position: absolute; top: 2px; right: 2px; color: #bbb; border: none; background: none; cursor: pointer; font-size: 16px; font-weight: bold; padding: 0 5px; }
+        .del-btn:hover { color: var(--danger-red); }
+        .arch-name { font-weight: bold; display: block; font-size: 12px; }
+        .arch-sum { color: var(--danger-red); font-weight: bold; font-size: 11px; }
+        .btn-group { display: flex; gap: 4px; margin-top: 5px; }
+        .btn { border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; padding: 8px; font-size: 13px; }
+        .btn-clear { background: #7f8c8d; }
+        .btn-save { flex: 1; background: var(--accent-blue); }
+        .btn-export { background: var(--export-orange); }
+        .btn-copy { flex: 2; background: var(--success-green); font-size: 16px; }
+        .holiday-info { background: #fff3f3; padding: 3px; border-radius: 3px; border: 1px solid #ffeaea; font-size: 10px; line-height: 1.2; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="airline-card">
+        <div class="card-header">華信 (單/回/總)</div>
+        <div class="card-body">
+            <table>
+                <tr><th colspan="2">台北</th><th colspan="2">高雄</th></tr>
+                <tr><td class="p-type">成</td><td class="p-val">2234/2128/<b class="p-total">4362</b></td><td class="p-type">成</td><td class="p-val">1911/1820/<b class="p-total">3731</b></td></tr>
+                <tr><td class="p-type">兒</td><td class="p-val">1676/1596/<b class="p-total">3272</b></td><td class="p-type">兒</td><td class="p-val">1433/1365/<b class="p-total">2798</b></td></tr>
+                <tr><td class="p-type">敬</td><td class="p-val">1117/1064/<b class="p-total">2181</b></td><td class="p-type">敬</td><td class="p-val">956/910/<b class="p-total">1866</b></td></tr>
+                <tr><th colspan="2">台中</th><td colspan="2"></td></tr>
+                <tr><td class="p-type">成</td><td class="p-val">1668/1589/<b class="p-total">3257</b></td><td class="p-type">兒</td><td class="p-val">1251/1192/<b class="p-total">2443</b></td></tr>
+                <tr><td class="p-type">敬</td><td class="p-val">834/795/<b class="p-total">1629</b></td><td colspan="2"></td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="airline-card">
+        <div class="card-header">立榮 (單/回/總)</div>
+        <div class="card-body">
+            <table>
+                <tr><th>台北</th><th>高雄</th><th>台中</th></tr>
+                <tr>
+                    <td>成: 2197/2092/<b class="p-total">4289</b><br>兒: 1868/1779/<b class="p-total">3647</b><br>敬: 1099/1046/<b class="p-total">2145</b></td>
+                    <td>成: 1812/1726/<b class="p-total">3538</b><br>兒: 1541/1468/<b class="p-total">3009</b><br>敬: 906/863/<b class="p-total">1769</b></td>
+                    <td>成: 1705/1624/<b class="p-total">3329</b><br>兒: 1450/1381/<b class="p-total">2831</b><br>敬: 853/812/<b class="p-total">1665</b></td>
+                </tr>
+                <tr><th>台南</th><th>嘉義</th><th></th></tr>
+                <tr>
+                    <td>成: 1643/1565/<b class="p-total">3208</b><br>兒: 1397/1331/<b class="p-total">2728</b><br>敬: 822/783/<b class="p-total">1605</b></td>
+                    <td>成: 1671/1591/<b class="p-total">3262</b><br>兒: 1421/1353/<b class="p-total">2774</b><br>敬: 836/796/<b class="p-total">1632</b></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="airline-card">
+        <div class="card-header">2026 連假 & 雜項</div>
+        <div class="card-body">
+            <div class="holiday-info">清明: 4/2-4/6 | 端午: 6/19-21<br>中秋: 9/25-28 | 國慶: 10/9-11</div>
+            <div style="margin-top: 4px;">
+                🚢 船票：1300/1500/<b class="p-total">1700</b><br>
+                🎫 半票：<b class="p-total">975</b> (敬/兒/愛)
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="col">
+        <div class="col-title">👤 客戶</div>
+        <input type="text" id="custName" class="name-input" placeholder="姓名與人數">
+        <div class="col-title">✍️ 輸入 (每輸入完按小計會自動空行)</div>
+        <textarea id="input" oninput="doSync()" placeholder="4/25-4/27&#10;台中機票來回 (1668+1589)*2&#10;住宿 2000*2&#10;小計&#10;&#10;自費水上活動 1200*2&#10;小計&#10;總計"></textarea>
+    </div>
+    
+    <div class="col">
+        <div class="col-title">📋 報價單預覽</div>
+        <div id="result" class="result-box"></div>
+        <div class="btn-group">
+            <button class="btn btn-clear" onclick="clearAll()">🗑️</button>
+            <button class="btn btn-save" onclick="saveArchive()">💾 存檔</button>
+            <button class="btn btn-export" onclick="exportToFile()">📥 導出</button>
+            <button class="btn btn-copy" onclick="copy()">📋 複製報價</button>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="col-title">🗂️ 存檔列表</div>
+        <div id="archiveList" class="archive-list"></div>
+    </div>
+</div>
+
+<script>
+let lastSum = 0;
+let lastDate = "未載日期";
+const holidayList = [
+    { start: "04/02", end: "04/06", name: "清明連假" },
+    { start: "06/19", end: "06/21", name: "端午連假" },
+    { start: "09/25", end: "09/28", name: "中秋連假" },
+    { start: "10/09", end: "10/11", name: "國慶連假" }
+];
+const weekDayMap = ["日", "一", "二", "三", "四", "五", "六"];
+
+function checkDateType(dateStr) {
+    if (!dateStr) return { text: "", dObj: null };
+    const p = dateStr.trim().split('/');
+    if (p.length !== 2) return { text: "", dObj: null };
+    const dObj = new Date(2026, parseInt(p[0]) - 1, parseInt(p[1]));
+    const m = (dObj.getMonth() + 1).toString().padStart(2, '0');
+    const d = dObj.getDate().toString().padStart(2, '0');
+    const checkStr = `${m}/${d}`;
+    const dayName = weekDayMap[dObj.getDay()];
+    let holidayName = "";
+    for (let h of holidayList) {
+        if (checkStr >= h.start && checkStr <= h.end) {
+            holidayName = `🚩 ${h.name}`;
+            break;
+        }
+    }
+    let typeText = holidayName ? `${holidayName} (週${dayName})` : `${([0, 5, 6].includes(dObj.getDay())) ? "☀️ 假日" : "☕ 平日"} (週${dayName})`;
+    return { text: typeText, dObj: dObj };
+}
+
+function doSync() {
+    const input = document.getElementById("input").value;
+    const name = document.getElementById("custName").value;
+    const resDiv = document.getElementById("result");
+    if(!input.trim()) { resDiv.innerText = ""; lastSum = 0; return; }
+
+    const lines = input.split("\n");
+    let out = name ? `👤 致：${name} 貴賓\n` : "";
+    out += "📋 澎湖旅遊行程報價明細\n──────────────\n\n";
+    
+    let totalSum = 0; 
+    let groupSum = 0; 
+    let showFooter = false;
+
+    lines.forEach(line => {
+        let text = line.trim();
+        if(!text) return; // 忽略空白行，由程式統一控制間隔
+
+        let dateRange = text.match(/^(\d{1,2}\/\d{1,2})\s*[-~～]\s*(\d{1,2}\/\d{1,2})$/);
+        let singleDate = text.match(/^(\d{1,2}\/\d{1,2})$/);
+
+        // 日期處理
+        if((dateRange || singleDate) && !text.includes("*")) {
+            lastDate = text;
+            if(dateRange) {
+                const s = checkDateType(dateRange[1]);
+                const e = checkDateType(dateRange[2]);
+                let duration = (s.dObj && e.dObj) ? ` 【${Math.round((e.dObj - s.dObj) / 86400000) + 1}天${Math.round((e.dObj - s.dObj) / 86400000)}夜】` : "";
+                out += `📅 日期：${text}${duration}\n   去程：${s.text}\n   回程：${e.text}\n\n`;
+            } else {
+                out += `📅 日期：${text}\n   類型：${checkDateType(singleDate[1]).text}\n\n`;
+            }
+            return;
+        }
+
+        // 計算處理
+        if(text.includes("*")) {
+            let parts = text.split("*");
+            let labelWithMath = parts[0].trim();
+            let qty = parseFloat(parts[1]) || 1;
+            let mathMatch = labelWithMath.match(/([\d\+\-\(\)\. ]+)$/);
+            if(mathMatch) {
+                try {
+                    let formula = mathMatch[0].trim();
+                    let unitPrice = new Function("return " + formula)();
+                    let label = labelWithMath.replace(formula, "").trim();
+                    let total = unitPrice * qty;
+                    out += `● ${label}：$${unitPrice.toLocaleString()} × ${qty}位 = $${total.toLocaleString()}\n`;
+                    groupSum += total; 
+                    totalSum += total;
+                    return;
+                } catch(e) {}
+            }
+        }
+
+        // 優惠折扣
+        if((text.includes("優惠") || text.includes("折扣") || (text.startsWith("-") && text.match(/\d/))) && !text.includes("*")) {
+            let valMatch = text.match(/-?\d+/);
+            if(valMatch) {
+                let val = parseInt(valMatch[0]);
+                out += `✨ ${text.replace(valMatch[0], "").trim()}：$${val.toLocaleString()}\n`;
+                groupSum += val;
+                totalSum += val;
+                return;
+            }
+        }
+
+        // 小計（核心優化：增加間隔）
+        if(text === "小計") {
+            out += `\n💰 【小計】：NT$ ${groupSum.toLocaleString()}\n──────────────\n\n`;
+            groupSum = 0; 
+            return;
+        }
+
+        // 總計（核心優化：底部文字拆開）
+        if(text === "總計" || text === "大計") {
+            out += `\n💰 【總計】：NT$ ${totalSum.toLocaleString()}\n──────────────\n`;
+            showFooter = true;
+            return;
+        }
+
+        out += text + "\n";
+    });
+    
+    if(showFooter) {
+        out += "\n🎁 包含：機場碼頭接送、250萬責任險、免稅店卡。\n📜 規範：悉依「國內旅遊定型化契約書」辦理。";
+    }
+
+    lastSum = totalSum;
+    resDiv.innerText = out;
+}
+
+// 存檔與導出邏輯維持不變
+function exportToFile() {
+    const text = document.getElementById("result").innerText;
+    const name = document.getElementById("custName").value || "未命名";
+    if(!text) { alert("尚未產生報價內容"); return; }
+    const blob = new Blob([text], { type: "text/plain" });
+    const anchor = document.createElement("a");
+    anchor.download = `${name}_報價單.txt`;
+    anchor.href = window.URL.createObjectURL(blob);
+    anchor.click();
+}
+
+function saveArchive() {
+    const name = document.getElementById("custName").value || "未命名";
+    const rawInput = document.getElementById("input").value;
+    if(!rawInput.trim()) return;
+    doSync();
+    const archive = JSON.parse(localStorage.getItem("p_quotes_v2") || "[]");
+    archive.unshift({ id: Date.now(), name, date: lastDate, sum: lastSum, rawInput });
+    localStorage.setItem("p_quotes_v2", JSON.stringify(archive.slice(0, 50)));
+    renderArchive();
+    alert("💾 已成功存檔");
+}
+
+function renderArchive() {
+    const archive = JSON.parse(localStorage.getItem("p_quotes_v2") || "[]");
+    const listDiv = document.getElementById("archiveList");
+    listDiv.innerHTML = archive.map(q => `
+        <div class="archive-item" onclick="loadQuote(${q.id})">
+            <button class="del-btn" onclick="deleteQuote(event, ${q.id})">×</button>
+            <span class="arch-name">${q.name}</span>
+            <span class="arch-sum">${q.date} | $${(q.sum || 0).toLocaleString()}</span>
+        </div>
+    `).join("") || '<div style="text-align:center;color:#999;padding:20px;">暫無存檔</div>';
+}
+
+function loadQuote(id) {
+    const archive = JSON.parse(localStorage.getItem("p_quotes_v2") || "[]");
+    const q = archive.find(i => i.id === id);
+    if(q) {
+        document.getElementById("custName").value = q.name;
+        document.getElementById("input").value = q.rawInput;
+        doSync();
+    }
+}
+
+function deleteQuote(e, id) {
+    e.stopPropagation();
+    if(!confirm("確定刪除？")) return;
+    let archive = JSON.parse(localStorage.getItem("p_quotes_v2") || "[]");
+    localStorage.setItem("p_quotes_v2", JSON.stringify(archive.filter(i => i.id !== id)));
+    renderArchive();
+}
+
+function clearAll() {
+    if(confirm("確定清空？")) {
+        document.getElementById("custName").value = "";
+        document.getElementById("input").value = "";
+        document.getElementById("result").innerText = "";
+    }
+}
+
+function copy() {
+    const text = document.getElementById("result").innerText;
+    if(!text) return;
+    navigator.clipboard.writeText(text).then(() => alert("✅ 報價已複製"));
+}
+
+window.onload = renderArchive;
+</script>
+</body>
+</html>
