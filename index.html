@@ -51,7 +51,7 @@
         .p-type { font-weight: bold; color: #555; width: 30px; }
         .p-val { color: #666; }
         .p-total { color: var(--danger-red); font-weight: bold; }
-        .main-container { display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 8px; height: calc(100vh - 240px); min-height: 380px; }
+        .main-container { display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 8px; min-height: 380px; }
         .col { display: flex; flex-direction: column; }
         .col-title { font-weight: bold; padding: 2px 0; color: var(--primary-dark); display: flex; justify-content: space-between; }
         .name-input {
@@ -66,7 +66,7 @@
         }
         .name-input:focus { border-color: #ab95ff; box-shadow: 0 0 0 3px rgba(171, 149, 255, 0.2); }
         textarea {
-            flex: 1;
+            min-height: 240px;
             font-size: 15px;
             padding: 10px;
             border: 1px solid #eadbf0;
@@ -74,16 +74,17 @@
             background: #fffdfc;
             resize: none;
             line-height: 1.4;
+            overflow-y: hidden;
         }
         .result-box {
-            flex: 1;
+            min-height: 240px;
             padding: 10px;
             background: #fff;
             border: 1px solid #eadbf0;
             border-radius: 12px;
             white-space: pre-wrap;
             font-size: 15px;
-            overflow-y: auto;
+            overflow-y: hidden;
             line-height: 1.6;
         }
         .archive-list {
@@ -255,7 +256,7 @@ function doSync() {
     const input = document.getElementById("input").value;
     const name = document.getElementById("custName").value;
     const resDiv = document.getElementById("result");
-    if(!input.trim()) { resDiv.innerText = ""; lastSum = 0; return; }
+    if(!input.trim()) { resDiv.innerText = ""; resizeContentBoxes(); lastSum = 0; return; }
 
     const lines = input.split("\n");
     let out = name ? `👤 致：${name} 貴賓\n` : "";
@@ -345,6 +346,20 @@ function doSync() {
     
     lastSum = totalSum;
     resDiv.innerText = out;
+    resizeContentBoxes();
+}
+
+function resizeContentBoxes() {
+    const inputBox = document.getElementById("input");
+    const resultBox = document.getElementById("result");
+    if (inputBox) {
+        inputBox.style.height = "auto";
+        inputBox.style.height = `${Math.max(240, inputBox.scrollHeight)}px`;
+    }
+    if (resultBox) {
+        resultBox.style.height = "auto";
+        resultBox.style.height = `${Math.max(240, resultBox.scrollHeight)}px`;
+    }
 }
 
 function exportToFile() {
@@ -437,6 +452,7 @@ function clearAll() {
         document.getElementById("custName").value = "";
         document.getElementById("input").value = "";
         document.getElementById("result").innerText = "";
+        resizeContentBoxes();
     }
 }
 
@@ -446,7 +462,10 @@ function copy() {
     navigator.clipboard.writeText(text).then(() => alert("✅ 報價已複製"));
 }
 
-window.onload = renderArchive;
+window.onload = () => {
+    renderArchive();
+    resizeContentBoxes();
+};
 </script>
 </body>
 </html>
