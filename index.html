@@ -365,18 +365,24 @@ function saveArchive() {
     doSync();
     const archive = JSON.parse(localStorage.getItem("p_quotes_v2") || "[]");
     const normalizedName = name.replace(/\s+/g, "").toLowerCase();
-    const existedIdx = archive.findIndex(i => (i.name || "").replace(/\s+/g, "").toLowerCase() === normalizedName);
+    const sameNameItems = archive.filter(i => (i.name || "").replace(/\s+/g, "").toLowerCase() === normalizedName);
 
-    if (existedIdx >= 0) {
-        const old = archive[existedIdx];
-        const oldInput = (old.rawInput || "").trim();
+    if (sameNameItems.length > 0) {
+        const oldCombined = sameNameItems
+            .map(i => (i.rawInput || "").trim())
+            .filter(Boolean)
+            .reverse()
+            .join("\n\n# 舊存檔\n");
         const newInput = rawInput.trim();
-        const mergedInput = oldInput
-            ? `${oldInput}\n\n# 第二次更新 ${new Date().toLocaleString()}\n${newInput}`
+        const mergedInput = oldCombined
+            ? `${oldCombined}\n\n# 本次更新 ${new Date().toLocaleString()}\n${newInput}`
             : newInput;
-        const merged = { ...old, name, date: lastDate, sum: lastSum, rawInput: mergedInput, updatedAt: Date.now() };
-        archive.splice(existedIdx, 1);
-        archive.unshift(merged);
+        const base = sameNameItems[0];
+        const merged = { ...base, name, date: lastDate, sum: lastSum, rawInput: mergedInput, updatedAt: Date.now() };
+        const rest = archive.filter(i => (i.name || "").replace(/\s+/g, "").toLowerCase() !== normalizedName);
+        rest.unshift(merged);
+        archive.length = 0;
+        archive.push(...rest);
         alert("💾 已累加更新同名存檔");
     } else {
         archive.unshift({ id: Date.now(), name, date: lastDate, sum: lastSum, rawInput });
