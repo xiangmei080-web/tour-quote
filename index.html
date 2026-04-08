@@ -369,10 +369,15 @@ function saveArchive() {
 
     if (existedIdx >= 0) {
         const old = archive[existedIdx];
-        const merged = { ...old, name, date: lastDate, sum: lastSum, rawInput, updatedAt: Date.now() };
+        const oldInput = (old.rawInput || "").trim();
+        const newInput = rawInput.trim();
+        const mergedInput = oldInput
+            ? `${oldInput}\n\n# 第二次更新 ${new Date().toLocaleString()}\n${newInput}`
+            : newInput;
+        const merged = { ...old, name, date: lastDate, sum: lastSum, rawInput: mergedInput, updatedAt: Date.now() };
         archive.splice(existedIdx, 1);
         archive.unshift(merged);
-        alert("💾 已更新同名存檔");
+        alert("💾 已累加更新同名存檔");
     } else {
         archive.unshift({ id: Date.now(), name, date: lastDate, sum: lastSum, rawInput });
         alert("💾 已成功存檔");
