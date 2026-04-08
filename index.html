@@ -359,15 +359,27 @@ function exportToFile() {
 }
 
 function saveArchive() {
-    const name = document.getElementById("custName").value || "未命名";
+    const name = (document.getElementById("custName").value || "未命名").trim();
     const rawInput = document.getElementById("input").value;
     if(!rawInput.trim()) return;
     doSync();
     const archive = JSON.parse(localStorage.getItem("p_quotes_v2") || "[]");
-    archive.unshift({ id: Date.now(), name, date: lastDate, sum: lastSum, rawInput });
+    const normalizedName = name.replace(/\s+/g, "").toLowerCase();
+    const existedIdx = archive.findIndex(i => (i.name || "").replace(/\s+/g, "").toLowerCase() === normalizedName);
+
+    if (existedIdx >= 0) {
+        const old = archive[existedIdx];
+        const merged = { ...old, name, date: lastDate, sum: lastSum, rawInput, updatedAt: Date.now() };
+        archive.splice(existedIdx, 1);
+        archive.unshift(merged);
+        alert("💾 已更新同名存檔");
+    } else {
+        archive.unshift({ id: Date.now(), name, date: lastDate, sum: lastSum, rawInput });
+        alert("💾 已成功存檔");
+    }
+
     localStorage.setItem("p_quotes_v2", JSON.stringify(archive.slice(0, 50)));
     renderArchive();
-    alert("💾 已成功存檔");
 }
 
 function renderArchive() {
