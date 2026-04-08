@@ -372,20 +372,29 @@ function saveArchive() {
             .map(i => (i.rawInput || "").trim())
             .filter(Boolean)
             .reverse()
-            .join("\n\n# 舊存檔\n");
+            .join("\n\n");
         const newInput = rawInput.trim();
+        const oldRevisionCount = (oldCombined.match(/# 第\d+次更新/g) || []).length;
+        const nextRevision = oldRevisionCount + 1;
         const mergedInput = oldCombined
-            ? `${oldCombined}\n\n# 本次更新 ${new Date().toLocaleString()}\n${newInput}`
-            : newInput;
+            ? `${oldCombined}\n\n# 第${nextRevision}次更新 ${new Date().toLocaleString()}\n${newInput}`
+            : `# 第1次更新 ${new Date().toLocaleString()}\n${newInput}`;
         const base = sameNameItems[0];
-        const merged = { ...base, name, date: lastDate, sum: lastSum, rawInput: mergedInput, updatedAt: Date.now() };
+        const merged = { ...base, name, date: lastDate, sum: lastSum, rawInput: mergedInput, updatedAt: Date.now(), revisionCount: nextRevision };
         const rest = archive.filter(i => (i.name || "").replace(/\s+/g, "").toLowerCase() !== normalizedName);
         rest.unshift(merged);
         archive.length = 0;
         archive.push(...rest);
         alert("💾 已累加更新同名存檔");
     } else {
-        archive.unshift({ id: Date.now(), name, date: lastDate, sum: lastSum, rawInput });
+        archive.unshift({
+            id: Date.now(),
+            name,
+            date: lastDate,
+            sum: lastSum,
+            rawInput: `# 第1次更新 ${new Date().toLocaleString()}\n${rawInput.trim()}`,
+            revisionCount: 1
+        });
         alert("💾 已成功存檔");
     }
 
@@ -400,7 +409,7 @@ function renderArchive() {
         <div class="archive-item" onclick="loadQuote(${q.id})">
             <button class="del-btn" onclick="deleteQuote(event, ${q.id})">×</button>
             <span class="arch-name">${q.name}</span>
-            <span class="arch-sum">${q.date} | $${(q.sum || 0).toLocaleString()}</span>
+            <span class="arch-sum">${q.date} | $${(q.sum || 0).toLocaleString()} | 共${q.revisionCount || 1}次</span>
         </div>
     `).join("") || '<div style="text-align:center;color:#999;padding:20px;">暫無存檔</div>';
 }
