@@ -4,40 +4,177 @@
     <meta charset="UTF-8">
     <title>澎湖旅遊報價系統 - 視覺優化版</title>
     <style>
-        :root { --primary-dark: #2c3e50; --accent-blue: #2980b9; --danger-red: #d32f2f; --bg-gray: #f0f2f5; --success-green: #27ae60; --export-orange: #e67e22; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg-gray); margin: 0; padding: 5px; color: #333; font-size: 11px; }
-        .dashboard { display: grid; grid-template-columns: 1.1fr 1.2fr 0.7fr; gap: 5px; margin-bottom: 5px; }
-        .airline-card { background: white; border-radius: 4px; border: 1px solid #ccc; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .card-header { background: var(--primary-dark); color: white; padding: 3px 6px; font-weight: bold; font-size: 12px; }
-        .card-body { padding: 4px; overflow-y: auto; max-height: 200px; }
-        table { width: 100%; border-collapse: collapse; line-height: 1.1; }
-        th { text-align: left; color: var(--accent-blue); border-bottom: 1px solid #eee; padding: 2px 0; font-size: 11px; }
-        td { padding: 1px 0; border-bottom: 1px dashed #f5f5f5; vertical-align: top; }
-        .p-type { font-weight: bold; color: #555; width: 30px; }
-        .p-val { color: #666; }
-        .p-total { color: var(--danger-red); font-weight: bold; }
-        .main-container { display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 8px; height: calc(100vh - 240px); min-height: 380px; }
-        .col { display: flex; flex-direction: column; }
-        .col-title { font-weight: bold; padding: 2px 0; color: var(--primary-dark); display: flex; justify-content: space-between; }
-        .name-input { padding: 6px; border: 1px solid var(--accent-blue); border-radius: 4px; margin-bottom: 4px; font-size: 14px; font-weight: bold; outline: none; }
-        textarea { flex: 1; font-size: 15px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #fffdf2; resize: none; line-height: 1.4; }
-        .result-box { flex: 1; padding: 10px; background: white; border: 1px solid #ccc; border-radius: 4px; white-space: pre-wrap; font-size: 15px; overflow-y: auto; line-height: 1.6; }
-        .archive-list { flex: 1; background: #dfe4ea; border: 1px solid #ccc; border-radius: 4px; overflow-y: auto; padding: 4px; }
-        .archive-item { background: white; border: 1px solid #ddd; padding: 5px; margin-bottom: 4px; border-radius: 3px; cursor: pointer; border-left: 4px solid var(--accent-blue); position: relative; }
-        .del-btn { position: absolute; top: 2px; right: 2px; color: #bbb; border: none; background: none; cursor: pointer; font-size: 16px; font-weight: bold; padding: 0 5px; }
+        @import url('https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500;700&display=swap');
+        :root {
+            --primary-dark: #c2649a;
+            --accent-blue: #8a96ff;
+            --danger-red: #ff5f95;
+            --bg-gray: #fff8fd;
+            --success-green: #52cdb0;
+            --export-orange: #ffb178;
+            --panel-border: #f3d7e7;
+            --text-main: #5a4261;
+            --soft-purple: #c9b1ff;
+            --soft-pink: #ff9bcf;
+            --soft-yellow: #fff2b8;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: "Kiwi Maru", "Microsoft JhengHei", "Segoe UI", sans-serif;
+            background: radial-gradient(circle at 20% -5%, #ffe8f6 0%, #fff8fd 35%, #fff4fb 100%);
+            margin: 0;
+            padding: 10px;
+            color: var(--text-main);
+            font-size: 12px;
+            animation: bgFloat 8s ease-in-out infinite alternate;
+        }
+        .app-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ff8fcb, #bca2ff);
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(188,162,255,.30);
+        }
+        .app-title { font-size: 18px; font-weight: 800; letter-spacing: .5px; }
+        .app-sub { font-size: 12px; opacity: .92; margin-top: 2px; }
+        .tag {
+            font-size: 11px;
+            background: rgba(255,255,255,.22);
+            border: 1px solid rgba(255,255,255,.3);
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-weight: 700;
+        }
+        .toolbar { display: flex; gap: 6px; align-items: center; }
+        .tool-select, .tool-toggle, .tool-reset {
+            border: 1px solid rgba(255,255,255,.42);
+            border-radius: 999px;
+            background: rgba(255,255,255,.2);
+            color: #fff;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .tool-select option { color: #333; }
+        .dashboard { display: grid; grid-template-columns: 1.1fr 1.2fr 0.7fr; gap: 8px; margin-bottom: 8px; }
+        .airline-card { background: #fff; border-radius: 16px; border: 1px solid var(--panel-border); box-shadow: 0 5px 14px rgba(194,100,154,.12); overflow: hidden; }
+        .card-header { background: linear-gradient(135deg, #ffa3d2, #ad9bff); color: #fff; padding: 7px 10px; font-weight: 700; font-size: 12px; letter-spacing: .3px; }
+        .card-body { padding: 8px; overflow-y: auto; max-height: 220px; }
+        table { width: 100%; border-collapse: collapse; line-height: 1.25; }
+        th { text-align: left; color: #7a65d8; border-bottom: 1px solid #f4dce8; padding: 3px 0; font-size: 11px; }
+        td { padding: 2px 0; border-bottom: 1px dashed #f1f4f9; vertical-align: top; }
+        .p-type { font-weight: 700; color: #4b5563; width: 30px; }
+        .p-val { color: #4b5563; }
+        .p-total { color: var(--danger-red); font-weight: 700; }
+        .main-container { display: grid; grid-template-columns: 1fr 1fr 0.85fr; gap: 10px; height: calc(100vh - 255px); min-height: 420px; }
+        .col { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--panel-border); border-radius: 16px; padding: 10px; box-shadow: 0 5px 14px rgba(194,100,154,.10); animation: cardFloat 4.6s ease-in-out infinite; }
+        .main-container .col:nth-child(2) { animation-delay: .35s; }
+        .main-container .col:nth-child(3) { animation-delay: .7s; }
+        .col-title { font-weight: 700; padding: 2px 0 6px; color: var(--primary-dark); display: flex; justify-content: space-between; font-size: 13px; }
+        .name-input { padding: 8px 10px; border: 1px solid #eec9de; border-radius: 12px; margin-bottom: 6px; font-size: 15px; font-weight: 700; outline: none; background: #fffefe; }
+        .name-input:focus, textarea:focus { border-color: #c785dd; box-shadow: 0 0 0 3px rgba(199,133,221,.18); }
+        textarea { flex: 1; font-size: 15px; padding: 10px; border: 1px solid var(--panel-border); border-radius: 12px; background: linear-gradient(180deg, #fffefa, #fff8ff); resize: none; line-height: 1.5; outline: none; }
+        .result-box { flex: 1; padding: 12px; background: #fffdff; border: 1px solid var(--panel-border); border-radius: 12px; white-space: pre-wrap; font-size: 15px; overflow-y: auto; line-height: 1.7; }
+        .archive-list { flex: 1; background: #fff5fc; border: 1px solid var(--panel-border); border-radius: 12px; overflow-y: auto; padding: 6px; }
+        .archive-item { background: #fff; border: 1px solid #f4dcec; padding: 7px; margin-bottom: 6px; border-radius: 12px; cursor: pointer; border-left: 4px solid #b89bff; position: relative; transition: transform .12s ease, box-shadow .12s ease; }
+        .archive-item:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(31,42,68,.08); }
+        .del-btn { position: absolute; top: 2px; right: 2px; color: #94a3b8; border: none; background: none; cursor: pointer; font-size: 16px; font-weight: 700; padding: 0 5px; }
         .del-btn:hover { color: var(--danger-red); }
-        .arch-name { font-weight: bold; display: block; font-size: 12px; }
-        .arch-sum { color: var(--danger-red); font-weight: bold; font-size: 11px; }
-        .btn-group { display: flex; gap: 4px; margin-top: 5px; }
-        .btn { border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; padding: 8px; font-size: 13px; }
-        .btn-clear { background: #7f8c8d; }
-        .btn-save { flex: 1; background: var(--accent-blue); }
+        .arch-name { font-weight: 700; display: block; font-size: 12px; color: #1f2937; }
+        .arch-sum { color: var(--danger-red); font-weight: 700; font-size: 11px; }
+        .btn-group { display: flex; gap: 6px; margin-top: 8px; }
+        .btn { border: none; border-radius: 999px; cursor: pointer; font-weight: 700; color: #fff; padding: 9px; font-size: 13px; box-shadow: 0 4px 10px rgba(194,100,154,.20); transition: transform .16s ease, filter .16s ease; position: relative; overflow: hidden; }
+        .btn:hover { filter: brightness(1.03); transform: translateY(-1px) scale(1.01); }
+        .btn::after {
+            content: "♡";
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%) scale(.75);
+            opacity: 0;
+            transition: all .18s ease;
+            pointer-events: none;
+            color: rgba(255,255,255,.95);
+            font-size: 12px;
+        }
+        .btn:hover::after { opacity: 1; right: 8px; transform: translateY(-50%) scale(1); }
+        .btn-clear { background: #b2b9cd; }
+        .btn-save { flex: 1; background: linear-gradient(135deg, #8f99ff, #8ac0ff); }
         .btn-export { background: var(--export-orange); }
-        .btn-copy { flex: 2; background: var(--success-green); font-size: 16px; }
-        .holiday-info { background: #fff3f3; padding: 3px; border-radius: 3px; border: 1px solid #ffeaea; font-size: 10px; line-height: 1.2; }
+        .btn-copy { flex: 2; background: linear-gradient(135deg, #57d2b3, #52c2de); font-size: 16px; }
+        .holiday-info { background: linear-gradient(135deg, #fff8fc, #fff6f6); padding: 5px; border-radius: 10px; border: 1px solid #ffdced; font-size: 10px; line-height: 1.25; }
+        .tip { margin: 6px 0 8px; font-size: 11px; color: #7b5f75; background: #fff8fd; border: 1px dashed #efbddd; padding: 6px 8px; border-radius: 10px; }
+        body.theme-lavender {
+            --primary-dark: #8d66cc;
+            --accent-blue: #8f9cff;
+            --danger-red: #ff6699;
+            --success-green: #61c7cb;
+            --export-orange: #ffb67a;
+            --panel-border: #e3d7fb;
+            --text-main: #4f4475;
+        }
+        body.theme-mint {
+            --primary-dark: #48a78f;
+            --accent-blue: #53b7b4;
+            --danger-red: #ff6d9b;
+            --success-green: #34c2a4;
+            --export-orange: #ffc071;
+            --panel-border: #cfeee6;
+            --text-main: #2f5d56;
+        }
+        body.dark-mode {
+            --panel-border: #40364f;
+            --text-main: #ece2f3;
+            background: radial-gradient(circle at 20% -5%, #2b1f35 0%, #1f1a2b 45%, #171522 100%);
+        }
+        body.dark-mode .airline-card,
+        body.dark-mode .col,
+        body.dark-mode .archive-item { background: #2a2336; border-color: #4a3c5f; color: #eadff2; }
+        body.dark-mode .archive-list,
+        body.dark-mode .result-box,
+        body.dark-mode textarea,
+        body.dark-mode .name-input { background: #241f31; border-color: #4a3c5f; color: #f2e8f9; }
+        body.dark-mode th { color: #c5b7ff; border-bottom-color: #4a3c5f; }
+        body.dark-mode td { border-bottom-color: #3b3250; }
+        body.dark-mode .tip { background: #2a2338; border-color: #5a4d72; color: #f0def7; }
+        body.dark-mode .holiday-info { background: #2f2440; border-color: #5a4d72; }
+        @keyframes cardFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-2px); }
+        }
+        @keyframes bgFloat {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 10% 6%; }
+        }
+        @media (max-width: 1100px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .main-container { grid-template-columns: 1fr; height: auto; min-height: 0; }
+            .col { min-height: 280px; }
+        }
     </style>
 </head>
 <body>
+<div class="app-top">
+    <div>
+        <div class="app-title">澎湖報價助手</div>
+        <div class="app-sub">香妹專用 · 甜萌可愛版</div>
+    </div>
+    <div class="toolbar">
+        <span class="tag">2026 Cute Edition</span>
+        <select id="themePicker" class="tool-select" onchange="setTheme(this.value)">
+            <option value="pink">粉色</option>
+            <option value="lavender">紫色</option>
+            <option value="mint">薄荷</option>
+        </select>
+        <button id="modeToggle" class="tool-toggle" onclick="toggleDarkMode()">🌙 深色</button>
+        <button class="tool-reset" onclick="resetAppearance()">↺ 重設</button>
+    </div>
+</div>
 
 <div class="dashboard">
     <div class="airline-card">
@@ -89,8 +226,9 @@
     <div class="col">
         <div class="col-title">👤 客戶</div>
         <input type="text" id="custName" class="name-input" placeholder="姓名與人數">
-        <div class="col-title">✍️ 輸入 (輸入「小計」會自動帶入條款)</div>
-        <textarea id="input" oninput="doSync()" placeholder="4/25-4/27&#10;台中機票來回 (1668+1589)*2&#10;住宿 2000*2&#10;小計"></textarea>
+        <div class="col-title">✍️ 輸入細目（輸入「小計」自動帶條款）</div>
+        <div class="tip">可直接貼：日期、船票、住宿、機車、成人公式、折扣、小計 ✨</div>
+        <textarea id="input" oninput="doSync()" placeholder="4/25-4/27&#10;船票來回&#10;住宿四人兩晚&#10;機車三天兩夜兩人一台&#10;成人2000+1800+525*2&#10;2-12&#10;小計"></textarea>
     </div>
     
     <div class="col">
@@ -98,9 +236,9 @@
         <div id="result" class="result-box"></div>
         <div class="btn-group">
             <button class="btn btn-clear" onclick="clearAll()">🗑️</button>
-            <button class="btn btn-save" onclick="saveArchive()">💾 存檔</button>
-            <button class="btn btn-export" onclick="exportToFile()">📥 導出</button>
-            <button class="btn btn-copy" onclick="copy()">📋 複製報價</button>
+            <button class="btn btn-save" onclick="saveArchive()">💾 快速存檔</button>
+            <button class="btn btn-export" onclick="exportToFile()">📥 匯出文字</button>
+            <button class="btn btn-copy" onclick="copy()">📋 一鍵複製</button>
         </div>
     </div>
 
@@ -113,6 +251,8 @@
 <script>
 let lastSum = 0;
 let lastDate = "未載日期";
+const THEME_KEY = "p_quote_theme_v1";
+const MODE_KEY = "p_quote_mode_v1";
 const holidayList = [
     { start: "04/02", end: "04/06", name: "清明連假" },
     { start: "06/19", end: "06/21", name: "端午連假" },
@@ -120,6 +260,33 @@ const holidayList = [
     { start: "10/09", end: "10/11", name: "國慶連假" }
 ];
 const weekDayMap = ["日", "一", "二", "三", "四", "五", "六"];
+function applySavedAppearance() {
+    const savedTheme = localStorage.getItem(THEME_KEY) || "pink";
+    const savedMode = localStorage.getItem(MODE_KEY) || "light";
+    setTheme(savedTheme, false);
+    setDarkMode(savedMode === "dark", false);
+}
+function setTheme(themeName, save = true) {
+    document.body.classList.remove("theme-lavender", "theme-mint");
+    if (themeName === "lavender") document.body.classList.add("theme-lavender");
+    if (themeName === "mint") document.body.classList.add("theme-mint");
+    const picker = document.getElementById("themePicker");
+    if (picker) picker.value = themeName;
+    if (save) localStorage.setItem(THEME_KEY, themeName);
+}
+function setDarkMode(isDark, save = true) {
+    document.body.classList.toggle("dark-mode", isDark);
+    const btn = document.getElementById("modeToggle");
+    if (btn) btn.innerText = isDark ? "☀️ 淺色" : "🌙 深色";
+    if (save) localStorage.setItem(MODE_KEY, isDark ? "dark" : "light");
+}
+function toggleDarkMode() {
+    setDarkMode(!document.body.classList.contains("dark-mode"));
+}
+function resetAppearance() {
+    setTheme("pink");
+    setDarkMode(false);
+}
 function safeEval(expr) {
     const cleaned = String(expr || "").replace(/\s+/g, "");
     if (!cleaned || !/^[\d+\-*/().]+$/.test(cleaned)) return null;
@@ -314,7 +481,10 @@ function copy() {
     navigator.clipboard.writeText(text).then(() => alert("✅ 報價已複製"));
 }
 
-window.onload = renderArchive;
+window.onload = function () {
+    applySavedAppearance();
+    renderArchive();
+};
 </script>
 </body>
 </html>
