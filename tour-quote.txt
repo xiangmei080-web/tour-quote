@@ -357,6 +357,17 @@ function doSync() {
             return;
         }
 
+        // 純數學算式（例如 5000+2000*2）直接計算，不當作「單價*人數」
+        if (/^[\d+\-*/().\s]+$/.test(text)) {
+            let v = safeEval(text);
+            if (v !== null) {
+                out += `● 費用：$${v.toLocaleString()}\n`;
+                groupSum += v;
+                totalSum += v;
+                return;
+            }
+        }
+
         if(text.includes("*")) {
             let parts = text.split("*");
             let labelWithMath = parts[0].trim();
@@ -367,6 +378,7 @@ function doSync() {
                     let formula = mathMatch[0].trim();
                     let unitPrice = new Function("return " + formula)();
                     let label = labelWithMath.replace(formula, "").trim();
+                    if (!label) return;
                     let total = unitPrice * qty;
                     out += `● ${label}：$${unitPrice.toLocaleString()} × ${qty}位 = $${total.toLocaleString()}\n`;
                     groupSum += total; 
