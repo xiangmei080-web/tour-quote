@@ -376,6 +376,21 @@ function doSync() {
             }
         }
 
+        if((text.includes("優惠") || text.includes("折扣") || (text.startsWith("-") && text.match(/\d/))) && !text.includes("*")) {
+            let valMatch = text.match(/-?\d+/);
+            if(valMatch) {
+                let rawVal = parseInt(valMatch[0]);
+                // 關鍵字項目視為扣款，避免「折扣-192」被解析成 +192
+                let val = (text.includes("優惠") || text.includes("折扣")) ? -Math.abs(rawVal) : rawVal;
+                let label = text.replace(valMatch[0], "").trim().replace(/[-:：\s]+$/, "");
+                if (!label) label = "折扣";
+                out += `✨ ${label}：$${val.toLocaleString()}\n`;
+                groupSum += val;
+                totalSum += val;
+                return;
+            }
+        }
+
         let labelExpr = text.match(/^([^\d]+)\s*([\d+\-*/(). ]+)$/);
         if (labelExpr) {
             let label = labelExpr[1].trim().replace(/[:：]$/, "");
@@ -384,17 +399,6 @@ function doSync() {
                 out += `● ${label}：$${v.toLocaleString()}\n`;
                 groupSum += v;
                 totalSum += v;
-                return;
-            }
-        }
-
-        if((text.includes("優惠") || text.includes("折扣") || (text.startsWith("-") && text.match(/\d/))) && !text.includes("*")) {
-            let valMatch = text.match(/-?\d+/);
-            if(valMatch) {
-                let val = parseInt(valMatch[0]);
-                out += `✨ ${text.replace(valMatch[0], "").trim()}：$${val.toLocaleString()}\n`;
-                groupSum += val;
-                totalSum += val;
                 return;
             }
         }
